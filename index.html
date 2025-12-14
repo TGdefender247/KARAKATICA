@@ -7,43 +7,81 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+
 html,body{
   height:100%;
-  background:#050006;
-  color:#f0e6ff;
   font-family:'Share Tech Mono', monospace;
   font-size:13px;
-  overflow-x:hidden;
   user-select:none;
 }
-canvas.matrix{
-  position:fixed; inset:0; z-index:0; background:#050006;
+
+/* ===== ФОН ===== */
+body{
+  background:
+    linear-gradient(rgba(5,0,6,0.75), rgba(5,0,6,0.75)),
+    url("skull-bg.png") center center / cover no-repeat fixed;
+  color:#f0e6ff;
 }
+
+/* ===== КОНТЕНТ ===== */
 #content{
-  position:relative; z-index:10;
-  max-width:720px; margin:auto; padding:40px 16px;
-  min-height:100vh; display:flex; flex-direction:column;
-  justify-content:center; gap:24px; text-align:center;
+  max-width:720px;
+  margin:auto;
+  padding:40px 16px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:24px;
+  text-align:center;
 }
+
 h1{
-  font-size:1.8rem; color:#e0d0ff;
-  text-shadow:0 0 4px #a26cff,0 0 18px #6000c0;
+  font-size:1.8rem;
+  color:#e0d0ff;
+  text-shadow:0 0 6px #a26cff, 0 0 20px #6000c0;
 }
-.futuristic-text{ font-size:.95rem; line-height:1.4; white-space:pre-line; }
-.telegram-warning{ color:#ff3b3b; font-weight:bold; }
-#container{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
+
+.futuristic-text{
+  font-size:.95rem;
+  line-height:1.4;
+  white-space:pre-line;
+}
+
+.telegram-warning{
+  color:#ff3b3b;
+  font-weight:bold;
+}
+
+/* ===== КНОПКИ ===== */
+#container{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:14px;
+}
+
 button{
-  background:transparent; border:1.5px solid #a26cff; color:#a26cff;
-  padding:9px 22px; border-radius:6px; cursor:pointer;
-  transition:.3s; min-width:110px;
+  background:rgba(0,0,0,0.55);
+  border:1.5px solid #a26cff;
+  color:#a26cff;
+  padding:10px 24px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:.3s;
+  min-width:120px;
+  backdrop-filter: blur(2px);
 }
-button:hover{ background:#a26cff; color:#000; box-shadow:0 0 10px #a26cff; }
+
+button:hover{
+  background:#a26cff;
+  color:#000;
+  box-shadow:0 0 12px #a26cff;
+}
 </style>
 </head>
 
 <body>
-
-<canvas class="matrix"></canvas>
 
 <div id="content">
   <h1>IVANICH SHOP</h1>
@@ -60,98 +98,67 @@ button:hover{ background:#a26cff; color:#000; box-shadow:0 0 10px #a26cff; }
 </div>
 
 <script>
-// ================= MATRIX =================
-const canvas=document.querySelector('.matrix');
-const ctx=canvas.getContext('2d');
-let w,h,cols,drops=[];
-const word="IVANICH";
-
-function resize(){
-  w=innerWidth; h=innerHeight;
-  canvas.width=w; canvas.height=h;
-  cols=Math.floor(w/14);
-  drops=Array(cols).fill(0);
-}
-function draw(){
-  ctx.fillStyle="rgba(0,0,20,0.15)";
-  ctx.fillRect(0,0,w,h);
-  ctx.fillStyle="#a26cff";
-  ctx.font="14px monospace";
-  for(let i=0;i<drops.length;i++){
-    const ch=word[Math.floor(Math.random()*word.length)];
-    ctx.fillText(ch,i*14,drops[i]*14);
-    if(drops[i]*14>h && Math.random()>0.97) drops[i]=0;
-    drops[i]++;
-  }
-}
-addEventListener('resize',resize);
-resize(); setInterval(draw,50);
-
-// ================= TELEGRAM LINKS (ОБНОВЛЕНО) =================
-// В HTML/DOM нет реальных ссылок. Всё открывается программно.
+// ================= TELEGRAM LINKS =================
 const tgLinks = {
-  "ОПЕРАТОР": { type:"https", url:"tg://join?invite=WqI3Xni0YjNi" },
-  "ЧАТ":     { type:"tg",    url:"tg://join?invite=q5G7ZOOG1vI0NmQ0" },
-  "ВИП ЧАТ": { type:"tg",    url:"tg://join?invite=lPlh3th-aWxjYzk0" },
-  "НОВОСТИ": { type:"tg",    url:"tg://join?invite=PPvXyMe87FxlM2I0" },
-  "ОТЗЫВЫ":  { type:"tg",    url:"tg://join?invite=IDPdbyYUbN0wYTk0" },
-  "АУКЦИОН": { type:"tg",    url:"tg://join?invite=P2N70uFsT99mMzYx" }
+  "ОПЕРАТОР": "tg://open?url=https://t.me/m/WaE8Y4yVZmI8",
+  "ЧАТ":     "tg://join?invite=q5G7ZOOG1vI0NmQ0",
+  "ВИП ЧАТ": "tg://join?invite=lPlh3th-aWxjYzk0",
+  "НОВОСТИ": "tg://join?invite=PPvXyMe87FxlM2I0",
+  "ОТЗЫВЫ":  "tg://join?invite=IDPdbyYUbN0wYTk0",
+  "АУКЦИОН": "tg://join?invite=P2N70uFsT99mMzYx"
 };
 
 // ================= TG OPEN ENGINE =================
-function openTelegram(linkObj){
-  const target = linkObj.url;
-
-  // 1) Основной способ — iframe (deep-link)
-  const iframe=document.createElement("iframe");
-  iframe.style.display="none";
-  iframe.src=target;
+function openTelegram(target){
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = target;
   document.body.appendChild(iframe);
 
-  // 2) Fallback — blob (если TG не открылся)
-  setTimeout(()=>{
+  setTimeout(() => {
     try{ iframe.remove(); }catch(e){}
-    const html=`
+    const html = `
 <!DOCTYPE html><html><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Telegram</title>
-<style>
-body{margin:0;background:#000;color:#b289ff;font-family:monospace;
-display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column}
-button{padding:12px 24px;border:2px solid #b289ff;background:transparent;color:#b289ff;font-size:16px}
-</style>
 </head>
-<body>
+<body style="margin:0;background:#000;color:#b289ff;
+display:flex;align-items:center;justify-content:center;height:100vh;
+font-family:monospace;flex-direction:column">
 <p>Открываем Telegram…</p>
-<button onclick="location.href='${target}'">Открыть</button>
+<button onclick="location.href='${target}'"
+style="padding:12px 24px;border:2px solid #b289ff;
+background:transparent;color:#b289ff;font-size:16px">
+Открыть
+</button>
 <script>
-setTimeout(()=>location.href='${target}',1200);
+setTimeout(()=>location.href='${target}',800);
 <\/script>
 </body></html>`;
-    const blob=new Blob([html],{type:"text/html"});
-    window.open(URL.createObjectURL(blob),"_blank","noopener");
-  },700);
+    const blob = new Blob([html], { type:"text/html" });
+    window.open(URL.createObjectURL(blob), "_blank", "noopener");
+  }, 400);
 }
 
 // ================= BUTTONS =================
-  const container=document.getElementById("container");
-Object.entries(tgLinks).forEach(([title,data])=>{
-  const btn=document.createElement("button");
-  btn.textContent=title;
-  btn.onclick=()=>openTelegram(data);
+const container = document.getElementById("container");
+Object.entries(tgLinks).forEach(([title, url]) => {
+  const btn = document.createElement("button");
+  btn.textContent = title;
+  btn.onclick = () => openTelegram(url);
   container.appendChild(btn);
 });
 
 // ================= BASIC PROTECTION =================
-document.addEventListener("keydown",e=>{
+document.addEventListener("keydown", e=>{
   if(
     e.key==="F12" ||
     (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==="i") ||
     (e.ctrlKey && e.key.toLowerCase()==="u")
   ){ e.preventDefault(); }
 });
-document.oncontextmenu=e=>e.preventDefault();
+document.oncontextmenu = e => e.preventDefault();
 </script>
 
 </body>
