@@ -9,18 +9,30 @@
 *{margin:0;padding:0;box-sizing:border-box}
 
 html,body{
+  width:100%;
   height:100%;
   font-family:'Share Tech Mono', monospace;
   font-size:13px;
   user-select:none;
 }
 
-/* ===== ФОН ===== */
+/* ===== ФОН (ВСЕГДА ЦЕЛИКОМ) ===== */
 body{
-  background:
-    linear-gradient(rgba(5,0,6,0.75), rgba(5,0,6,0.75)),
-    url("skull-bg.png") center center / cover no-repeat fixed;
+  background-color:#050006;
+  background-image:url("skull-bg.png");
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-size:contain; /* КЛЮЧЕВОЕ */
   color:#f0e6ff;
+}
+
+/* затемнение для читаемости */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(5,0,6,0.65);
+  z-index:-1;
 }
 
 /* ===== КОНТЕНТ ===== */
@@ -39,7 +51,7 @@ body{
 h1{
   font-size:1.8rem;
   color:#e0d0ff;
-  text-shadow:0 0 6px #a26cff, 0 0 20px #6000c0;
+  text-shadow:0 0 6px #a26cff,0 0 20px #6000c0;
 }
 
 .futuristic-text{
@@ -70,7 +82,7 @@ button{
   cursor:pointer;
   transition:.3s;
   min-width:120px;
-  backdrop-filter: blur(2px);
+  backdrop-filter:blur(2px);
 }
 
 button:hover{
@@ -110,20 +122,15 @@ const tgLinks = {
 
 // ================= TG OPEN ENGINE =================
 function openTelegram(target){
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = target;
+  const iframe=document.createElement("iframe");
+  iframe.style.display="none";
+  iframe.src=target;
   document.body.appendChild(iframe);
 
-  setTimeout(() => {
-    try{ iframe.remove(); }catch(e){}
-    const html = `
-<!DOCTYPE html><html><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telegram</title>
-</head>
-<body style="margin:0;background:#000;color:#b289ff;
+  setTimeout(()=>{
+    try{iframe.remove()}catch(e){}
+    const html=`
+<!DOCTYPE html><html><body style="margin:0;background:#000;color:#b289ff;
 display:flex;align-items:center;justify-content:center;height:100vh;
 font-family:monospace;flex-direction:column">
 <p>Открываем Telegram…</p>
@@ -136,29 +143,29 @@ background:transparent;color:#b289ff;font-size:16px">
 setTimeout(()=>location.href='${target}',800);
 <\/script>
 </body></html>`;
-    const blob = new Blob([html], { type:"text/html" });
-    window.open(URL.createObjectURL(blob), "_blank", "noopener");
-  }, 400);
+    const blob=new Blob([html],{type:"text/html"});
+    window.open(URL.createObjectURL(blob),"_blank","noopener");
+  },400);
 }
 
 // ================= BUTTONS =================
-const container = document.getElementById("container");
-Object.entries(tgLinks).forEach(([title, url]) => {
-  const btn = document.createElement("button");
-  btn.textContent = title;
-  btn.onclick = () => openTelegram(url);
+const container=document.getElementById("container");
+Object.entries(tgLinks).forEach(([title,url])=>{
+  const btn=document.createElement("button");
+  btn.textContent=title;
+  btn.onclick=()=>openTelegram(url);
   container.appendChild(btn);
 });
 
 // ================= BASIC PROTECTION =================
-document.addEventListener("keydown", e=>{
+document.addEventListener("keydown",e=>{
   if(
     e.key==="F12" ||
-    (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==="i") ||
-    (e.ctrlKey && e.key.toLowerCase()==="u")
-  ){ e.preventDefault(); }
+    (e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==="i") ||
+    (e.ctrlKey&&e.key.toLowerCase()==="u")
+  ){e.preventDefault()}
 });
-document.oncontextmenu = e => e.preventDefault();
+document.oncontextmenu=e=>e.preventDefault();
 </script>
 
 </body>
