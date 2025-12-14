@@ -17,59 +17,27 @@ html,body{
   user-select:none;
 }
 canvas.matrix{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  background:#050006;
+  position:fixed; inset:0; z-index:0; background:#050006;
 }
 #content{
-  position:relative;
-  z-index:10;
-  max-width:720px;
-  margin:auto;
-  padding:40px 16px;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  gap:24px;
-  text-align:center;
+  position:relative; z-index:10;
+  max-width:720px; margin:auto; padding:40px 16px;
+  min-height:100vh; display:flex; flex-direction:column;
+  justify-content:center; gap:24px; text-align:center;
 }
 h1{
-  font-size:1.8rem;
-  color:#e0d0ff;
+  font-size:1.8rem; color:#e0d0ff;
   text-shadow:0 0 4px #a26cff,0 0 18px #6000c0;
 }
-.futuristic-text{
-  font-size:.95rem;
-  line-height:1.4;
-  white-space:pre-line;
-}
-.telegram-warning{
-  color:#ff3b3b;
-  font-weight:bold;
-}
-#container{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:14px;
-}
+.futuristic-text{ font-size:.95rem; line-height:1.4; white-space:pre-line; }
+.telegram-warning{ color:#ff3b3b; font-weight:bold; }
+#container{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; }
 button{
-  background:transparent;
-  border:1.5px solid #a26cff;
-  color:#a26cff;
-  padding:9px 22px;
-  border-radius:6px;
-  cursor:pointer;
-  transition:.3s;
-  min-width:100px;
+  background:transparent; border:1.5px solid #a26cff; color:#a26cff;
+  padding:9px 22px; border-radius:6px; cursor:pointer;
+  transition:.3s; min-width:110px;
 }
-button:hover{
-  background:#a26cff;
-  color:#000;
-  box-shadow:0 0 10px #a26cff;
-}
+button:hover{ background:#a26cff; color:#000; box-shadow:0 0 10px #a26cff; }
 </style>
 </head>
 
@@ -93,8 +61,8 @@ button:hover{
 
 <script>
 // ================= MATRIX =================
-const canvas = document.querySelector('.matrix');
-const ctx = canvas.getContext('2d');
+const canvas=document.querySelector('.matrix');
+const ctx=canvas.getContext('2d');
 let w,h,cols,drops=[];
 const word="IVANICH";
 
@@ -119,74 +87,59 @@ function draw(){
 addEventListener('resize',resize);
 resize(); setInterval(draw,50);
 
-// ================= TELEGRAM DEEP LINKS (НЕ ВИДНЫ) =================
+// ================= TELEGRAM LINKS (ОБНОВЛЕНО) =================
+// В HTML/DOM нет реальных ссылок. Всё открывается программно.
 const tgLinks = {
-  "ОПЕРАТОР": "tg://join?invite=WqI3Xni0YjNi",
-  "БОТ": "tg://resolve?domain=dasfjhlsdasdasd_bot",
-  "ОТЗЫВЫ": "tg://join?invite=r_IDPdbyYUbN0wYTk0",
-  "ВИП ЧАТ": "tg://join?invite=lPlh3th-aWxjYzk0",
-  "НОВОСТИ": "tg://join?invite=PPvXyMe87FxlM2I0",
-  "ЧАТ": "tg://join?invite=q5G7ZOOG1vI0NmQ0"
+  "ОПЕРАТОР": { type:"https", url:"https://t.me/m/WqI3Xni0YjNi" },
+  "ЧАТ":     { type:"tg",    url:"tg://join?invite=q5G7ZOOG1vI0NmQ0" },
+  "ВИП ЧАТ": { type:"tg",    url:"tg://join?invite=lPlh3th-aWxjYzk0" },
+  "НОВОСТИ": { type:"tg",    url:"tg://join?invite=PPvXyMe87FxlM2I0" },
+  "ОТЗЫВЫ":  { type:"tg",    url:"tg://join?invite=IDPdbyYUbN0wYTk0" },
+  "АУКЦИОН": { type:"tg",    url:"tg://join?invite=P2N70uFsT99mMzYx" }
 };
 
 // ================= TG OPEN ENGINE =================
-function openTelegram(deep){
-  // iframe — основной способ
+function openTelegram(linkObj){
+  const target = linkObj.url;
+
+  // 1) Основной способ — iframe (deep-link)
   const iframe=document.createElement("iframe");
   iframe.style.display="none";
-  iframe.src=deep;
+  iframe.src=target;
   document.body.appendChild(iframe);
 
-  // fallback — blob
+  // 2) Fallback — blob (если TG не открылся)
   setTimeout(()=>{
-    iframe.remove();
+    try{ iframe.remove(); }catch(e){}
     const html=`
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Telegram</title>
 <style>
-body{
-  margin:0;
-  background:#000;
-  color:#b289ff;
-  font-family:monospace;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  flex-direction:column;
-}
-button{
-  padding:12px 24px;
-  border:2px solid #b289ff;
-  background:transparent;
-  color:#b289ff;
-  font-size:16px;
-}
+body{margin:0;background:#000;color:#b289ff;font-family:monospace;
+display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column}
+button{padding:12px 24px;border:2px solid #b289ff;background:transparent;color:#b289ff;font-size:16px}
 </style>
 </head>
 <body>
 <p>Открываем Telegram…</p>
-<button onclick="location.href='${deep}'">Открыть</button>
+<button onclick="location.href='${target}'">Открыть</button>
 <script>
-setTimeout(()=>location.href='${deep}',1200);
+setTimeout(()=>location.href='${target}',1200);
 <\/script>
-</body>
-</html>`;
+</body></html>`;
     const blob=new Blob([html],{type:"text/html"});
     window.open(URL.createObjectURL(blob),"_blank","noopener");
   },700);
 }
 
 // ================= BUTTONS =================
-const container=document.getElementById("container");
-Object.entries(tgLinks).forEach(([title,link])=>{
+  const container=document.getElementById("container");
+Object.entries(tgLinks).forEach(([title,data])=>{
   const btn=document.createElement("button");
   btn.textContent=title;
-  btn.onclick=()=>openTelegram(link);
+  btn.onclick=()=>openTelegram(data);
   container.appendChild(btn);
 });
 
@@ -196,9 +149,7 @@ document.addEventListener("keydown",e=>{
     e.key==="F12" ||
     (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==="i") ||
     (e.ctrlKey && e.key.toLowerCase()==="u")
-  ){
-    e.preventDefault();
-  }
+  ){ e.preventDefault(); }
 });
 document.oncontextmenu=e=>e.preventDefault();
 </script>
