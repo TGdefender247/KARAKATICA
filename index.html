@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>𝐈𝐕𝐀𝐍𝐈𝐂𝐇 𝐓𝐎𝐏 𝐌𝐀𝐑𝐊𝐄𝐓</title>
+<title>IVANICH SHOP</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -12,11 +12,10 @@ html,body{
   width:100%;
   height:100%;
   font-family:'Share Tech Mono', monospace;
-  font-size:13px;
   user-select:none;
 }
 
-/* ===== ФОН (ЦЕЛИКОМ) ===== */
+/* ===== ФОН ===== */
 body{
   background:#050006 url("skull-bg.png") center center / contain no-repeat fixed;
 }
@@ -43,7 +42,7 @@ body::before{
   text-align:center;
 }
 
-/* ===== ЧЁРНЫЙ ТЕКСТ + ЗОЛОТОЙ НЕОН ===== */
+/* ===== ТЕКСТ: ЧЁРНЫЙ + НЕОНОВАЯ ОБВОДКА ===== */
 h1, .futuristic-text{
   color:#000;
   text-shadow:
@@ -60,7 +59,7 @@ h1{ font-size:1.9rem; }
   white-space:pre-line;
 }
 
-/* ===== КРАСНЫЙ НЕОН ПРЕДУПРЕЖДЕНИЕ ===== */
+/* ===== КРАСНЫЙ НЕОН ===== */
 .telegram-warning{
   font-size:1.35rem;
   font-weight:900;
@@ -82,14 +81,12 @@ h1{ font-size:1.9rem; }
 }
 
 button{
-  background:rgba(0,0,0,0.55);
+  background:rgba(0,0,0,0.6);
   border:2px solid #ffcc55;
   color:#000;
-  padding:11px 28px;
+  padding:12px 30px;
   border-radius:6px;
   cursor:pointer;
-  transition:.25s;
-  min-width:140px;
   font-weight:800;
   text-shadow:
     0 0 3px #ffd86b,
@@ -97,15 +94,14 @@ button{
   box-shadow:
     0 0 6px #ffcc55,
     0 0 18px #cc8f00;
+  transition:.25s;
 }
 
 button:hover{
   background:#ffcc55;
-  color:#000;
-  text-shadow:none;
   box-shadow:
-    0 0 14px #ffcc55,
-    0 0 34px #ffb700;
+    0 0 16px #ffcc55,
+    0 0 36px #ffb700;
 }
 </style>
 </head>
@@ -113,10 +109,12 @@ button:hover{
 <body>
 
 <div id="content">
-  <h1>𝐈𝐕𝐀𝐍𝐈𝐂𝐇 𝐓𝐎𝐏 𝐌𝐀𝐑𝐊𝐄𝐓</h1>
+  <h1>IVANICH SHOP</h1>
 
   <p class="futuristic-text">
 НАШ КЛИЕНТ — НЕ БОГ, НО ОЧЕНЬ БЛИЗКО  
+СЕРВИС НА ГРАНИ ФАНТАСТИКИ  
+ЭТО НЕ МАГАЗИН — ЭТО ДОСТУП
   </p>
 
   <p class="telegram-warning">
@@ -127,7 +125,7 @@ button:hover{
 </div>
 
 <script>
-// ===== ССЫЛКИ (TG + WEB FALLBACK) =====
+// ===== РЕАЛЬНЫЕ КОНТАКТЫ (НЕ СВЕТЯТСЯ) =====
 const LINKS = {
   "ОПЕРАТОР": {
     tg:  "tg://open?url=https://t.me/m/WaE8Y4yVZmI8",
@@ -155,27 +153,45 @@ const LINKS = {
   }
 };
 
-// ===== 100% ОТКРЫТИЕ =====
-function openLink(obj){
-  // попытка Telegram App
-  const iframe=document.createElement("iframe");
+// ===== BLOB-РЕДИРЕКТ (АДРЕС = blob: ) =====
+function openViaBlob(data){
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Redirect</title>
+</head>
+<body style="margin:0;background:#000;color:#ffcc55;
+display:flex;align-items:center;justify-content:center;height:100vh;
+font-family:monospace;flex-direction:column">
+<p>Открываем Telegram…</p>
+<script>
+(function(){
+  var iframe=document.createElement("iframe");
   iframe.style.display="none";
-  iframe.src=obj.tg;
+  iframe.src="${data.tg}";
   document.body.appendChild(iframe);
-
-  // гарантированный fallback
-  setTimeout(()=>{
+  setTimeout(function(){
     try{iframe.remove()}catch(e){}
-    window.open(obj.web, "_blank", "noopener");
-  }, 450);
+    location.href="${data.web}";
+  },500);
+})();
+<\/script>
+</body>
+</html>`;
+  const blob = new Blob([html], {type:"text/html"});
+  const blobUrl = URL.createObjectURL(blob);
+  window.open(blobUrl, "_blank", "noopener");
 }
 
 // ===== КНОПКИ =====
 const container=document.getElementById("container");
-Object.entries(LINKS).forEach(([title, obj])=>{
+Object.entries(LINKS).forEach(([title, data])=>{
   const b=document.createElement("button");
   b.textContent=title;
-  b.onclick=()=>openLink(obj);
+  b.onclick=()=>openViaBlob(data);
   container.appendChild(b);
 });
 
