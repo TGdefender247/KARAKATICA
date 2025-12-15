@@ -3,91 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>𝐈𝐕𝐀𝐍𝐈𝐂𝐇 𝐓𝐎𝐏 𝐌𝐀𝐑𝐊𝐄𝐓</title>
+<title>IVANICH TOP MARKET</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;font-family:'Share Tech Mono', monospace;user-select:none}
-body{background:#050006 url("skull-bg.png") center/contain no-repeat fixed}
-body::before{content:"";position:fixed;inset:0;background:rgba(5,0,6,.65);z-index:-1}
+html,body{
+  width:100%;height:100%;
+  font-family:'Share Tech Mono', monospace;
+  user-select:none;
+  background:#050006;
+}
 
-#content{max-width:720px;margin:auto;padding:40px 16px;min-height:100vh;display:flex;flex-direction:column;justify-content:center;gap:26px;text-align:center}
-h1,.futuristic-text{color:#000;text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700,0 0 22px #cc8f00}
+/* ФОН */
+body{
+  background:#050006 url("skull-bg.png") center center / contain no-repeat fixed;
+}
+body::before{
+  content:"";position:fixed;inset:0;
+  background:rgba(5,0,6,.65);z-index:-1;
+}
+
+/* КОНТЕНТ */
+#content{
+  max-width:720px;margin:auto;padding:40px 16px;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;gap:26px;text-align:center;
+}
+
+/* ЗОЛОТОЙ НЕОН */
+h1,.futuristic-text{
+  color:#000;
+  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700,0 0 22px #cc8f00;
+}
 h1{font-size:1.9rem}
 .futuristic-text{font-size:1rem;line-height:1.5;white-space:pre-line}
 
+/* КРАСНЫЙ НЕОН */
 .telegram-warning{
-  font-size:1.35rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#000;
-  text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000
+  font-size:1.35rem;font-weight:900;
+  text-transform:uppercase;
+  color:#000;
+  text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
 }
 
+/* КНОПКИ */
 #container{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}
 button{
-  background:rgba(0,0,0,.55);border:2px solid #ffcc55;color:#000;
-  padding:11px 28px;border-radius:6px;cursor:pointer;min-width:140px;font-weight:800;
-  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
-  box-shadow:0 0 6px #ffcc55,0 0 18px #cc8f00;transition:.25s
-}
-button:hover{background:#ffcc55;text-shadow:none;box-shadow:0 0 14px #ffcc55,0 0 34px #ffb700}
-
-/* Сообщение детекта */
-#tg-msg{
-  display:none;margin-top:10px;font-weight:900;
+  background:rgba(0,0,0,.55);
+  border:2px solid #ffcc55;
   color:#000;
-  text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000
+  padding:12px 30px;
+  border-radius:6px;
+  cursor:pointer;
+  min-width:140px;
+  font-weight:800;
+  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
+  box-shadow:0 0 6px #ffcc55,0 0 18px #cc8f00;
+  transition:.25s;
+}
+button:hover{
+  background:#ffcc55;
+  box-shadow:0 0 14px #ffcc55,0 0 34px #ffb700;
+}
+button:disabled,
+button.locked{
+  opacity:0.45;
+  cursor:not-allowed;
+  box-shadow:none!important;
+  filter:grayscale(1);
+}
+
+/* СООБЩЕНИЕ */
+#tg-msg{
+  display:none;
+  margin-top:12px;
+  font-weight:900;
+  color:#000;
+  text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
 }
 </style>
 </head>
 
 <body>
+
 <div id="content">
-  <h1>𝐈𝐕𝐀𝐍𝐈𝐂𝐇 𝐓𝐎𝐏 𝐌𝐀𝐑𝐊𝐄𝐓</h1>
+  <h1>IVANICH TOP MARKET</h1>
 
   <p class="futuristic-text">
 НАШ КЛИЕНТ — НЕ БОГ, НО ОЧЕНЬ БЛИЗКО  
+СЕРВИС НА ГРАНИ ФАНТАСТИКИ  
+ЭТО НЕ МАГАЗИН — ЭТО ДОСТУП
   </p>
 
-  <p class="telegram-warning">ПЕРЕХОД В TELEGRAM ТОЛЬКО ЧЕРЕЗ ПРИЛОЖЕНИЕ</p>
+  <p class="telegram-warning">
+ПЕРЕХОД В TELEGRAM ТОЛЬКО ЧЕРЕЗ ПРИЛОЖЕНИЕ
+  </p>
 
   <div id="container"></div>
 
   <div id="tg-msg">
-    ❌ Telegram Desktop не установлен<br><br>
-    ⚠️ Для доступа необходимо установить Telegram Desktop<br>
-    Переход через браузер запрещён
+❌ Telegram Desktop не установлен<br><br>
+⚠️ Для доступа необходимо установить Telegram Desktop<br>
+Переход через браузер запрещён
   </div>
 </div>
 
 <script>
-/* ================= АНТИ-DEVTOOLS И АНТИ-КОПИРОВАНИЕ ================= */
-(function(){
-  const kill=()=>{document.body.innerHTML='';throw 0};
-  ['contextmenu','copy','cut','dragstart','selectstart'].forEach(e=>addEventListener(e,x=>{x.preventDefault();kill()}));
-  addEventListener('keydown',e=>{
-    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&'ij'.includes(e.key.toLowerCase()))||(e.ctrlKey&&'ucs'.includes(e.key.toLowerCase()))){
-      e.preventDefault();kill();
-    }
-  });
-  setInterval(()=>{ if(Math.abs(outerWidth-innerWidth)>160||Math.abs(outerHeight-innerHeight)>160) kill(); },700);
-  setInterval(()=>{ try{debugger}catch(e){} },900);
-})();
-
-/* ================= ПРОВЕРКА: ТОЛЬКО ПК ================= */
+/* =========================
+   ВСПОМОГАТЕЛЬНЫЕ ПРОВЕРКИ
+   ========================= */
 function isDesktop(){
-  const ua=navigator.userAgent.toLowerCase();
-  return /(windows|mac os|linux)/.test(ua) && !/(android|iphone|ipad)/.test(ua);
+  const ua = navigator.userAgent.toLowerCase();
+  return /(windows|mac os|linux)/.test(ua) &&
+         !/(android|iphone|ipad)/.test(ua);
 }
 
-/* ================= ОДНОРАЗОВЫЙ КЛИК ================= */
-function once(){
-  if(sessionStorage.getItem('_once')) return false;
-  sessionStorage.setItem('_once','1'); return true;
+/* =========================
+   ЗАЩИТА ОТ ПОВТОРНЫХ КЛИКОВ
+   ========================= */
+let GLOBAL_LOCK = false;
+function lockAllButtons(){
+  document.querySelectorAll('button').forEach(btn=>{
+    btn.disabled = true;
+    btn.classList.add('locked');
+  });
 }
 
-/* ================= ДИНАМИЧЕСКАЯ СБОРКА tg:// ================= */
-const PFX=['t','g',':','/','/','j','o','i','n','?','i','n','v','i','t','e','='];
-const mk=(p)=>PFX.join('')+p.join('');
-const INV={
+/* =========================
+   ДИНАМИЧЕСКАЯ СБОРКА tg://
+   ========================= */
+function buildTG(inv){
+  return ['t','g',':','/','/','j','o','i','n','?','i','n','v','i','t','e','='].join('')
+       + inv.join('');
+}
+
+/* INVITE-КОДЫ (РАЗБИТЫ) */
+const INVITES = {
   OP:['W','a','E','8','Y','4','y','V','Z','m','I','8'],
   CH:['q','5','G','7','Z','O','O','G','1','v','I','0','N','m','Q','0'],
   VI:['l','P','l','h','3','t','h','-','a','W','x','j','Y','z','k','0'],
@@ -96,63 +148,47 @@ const INV={
   AU:['P','2','N','7','0','u','F','s','T','9','9','m','M','z','Y','x']
 };
 
-/* ================= BLOB → ТОЛЬКО TG + ДЕТЕКТ ================= */
-function openTG(code){
-  const msg=document.getElementById('tg-msg');
-  msg.style.display='none';
+/* =========================
+   ОТКРЫТИЕ TELEGRAM
+   ========================= */
+function openTG(inv){
+  if(GLOBAL_LOCK) return;
+  GLOBAL_LOCK = true;
+  lockAllButtons();
 
-  if(!isDesktop()){
-    msg.style.display='block';
-    return;
+  const msg = document.getElementById('tg-msg');
+  msg.style.display = 'none';
+
+  const tgLink = buildTG(inv);
+
+  // ❗️ Единственный стабильный способ
+  window.location.href = tgLink;
+
+  // Детект Telegram Desktop (ТОЛЬКО ПК)
+  if(isDesktop()){
+    setTimeout(()=>{
+      msg.style.display = 'block';
+    }, 1200);
   }
-  if(!once()) return;
-
-  const tgLink=mk(code);
-  const html=`<!doctype html><meta charset=utf-8>
-  <script>
-(function(){
-  var done=false;
-  var f=document.createElement('iframe');
-  f.style.display='none';
-  f.src="${tgLink}";
-  document.body.appendChild(f);
-
-  // Если TG перехватил — страница потеряет фокус
-  window.addEventListener('blur',function(){ done=true; });
-
-  // Если не перехватил — сообщим родителю
-  setTimeout(function(){
-    if(!done){
-      try{ parent.postMessage('TG_NOT_OPENED','*'); }catch(e){}
-    }
-  },800);
-})();
-<\/script>`;
-  const b=new Blob([html],{type:'text/html'});
-  const w=open(URL.createObjectURL(b),'_blank','noopener');
-
-  // Слушаем сообщение от blob
-  const onMsg=(e)=>{
-    if(e.data==='TG_NOT_OPENED'){
-      msg.style.display='block';
-      removeEventListener('message',onMsg);
-      try{ w&&w.close(); }catch(e){}
-    }
-  };
-  addEventListener('message',onMsg);
 }
-
-/* ================= КНОПКИ ================= */
-const C=document.getElementById('container');
+  /* =========================
+   КНОПКИ
+   ========================= */
+const container = document.getElementById('container');
 [
-  ['ОПЕРАТОР',INV.OP],['ЧАТ',INV.CH],['ВИП ЧАТ',INV.VI],
-  ['НОВОСТИ',INV.NO],['ОТЗЫВЫ',INV.OT],['АУКЦИОН',INV.AU]
-].forEach(x=>{
+  ['ОПЕРАТОР',INVITES.OP],
+  ['ЧАТ',INVITES.CH],
+  ['ВИП ЧАТ',INVITES.VI],
+  ['НОВОСТИ',INVITES.NO],
+  ['ОТЗЫВЫ',INVITES.OT],
+  ['АУКЦИОН',INVITES.AU]
+].forEach(item=>{
   const b=document.createElement('button');
-  b.textContent=x[0];
-  b.onclick=()=>openTG(x[1]);
-  C.appendChild(b);
+  b.textContent=item[0];
+  b.onclick=()=>openTG(item[1]);
+  container.appendChild(b);
 });
 </script>
+
 </body>
 </html>
