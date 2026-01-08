@@ -88,6 +88,27 @@ button.locked{
   color:#000;
   text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
 }
+
+/* КНОПКИ В СООБЩЕНИИ */
+.tg-actions{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+}
+.tg-actions a{
+  display:inline-block;
+  padding:12px 16px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:900;
+  background:rgba(0,0,0,.55);
+  border:2px solid #ffcc55;
+  color:#000;
+  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
+  box-shadow:0 0 6px #ffcc55,0 0 18px #cc8f00;
+}
 </style>
 </head>
 
@@ -96,79 +117,121 @@ button.locked{
 <div id="content">
   <h1>🐙 чёᴩнᴀя ᴋ🅰️ᴩᴀᴋᴀᴛицᴀ 🐙</h1>
 
-  <p class="futuristic-text"> 
-VIP КУРИЛКА  
-  </p>
+  <p class="futuristic-text">VIP КУРИЛКА</p>
 
-  <p class="telegram-warning">
-🅸🆅🅰️🅽🅾️🆅🅾️ - 🅽.🅽🅾️🆅🅶🅾️🆁🅾️🅳
-  </p>
+  <p class="telegram-warning">🅸🆅🅰️🅽🅾️🆅🅾️ - 🅽.🅽🅾️🆅🅶🅾️🆁🅾️🅳</p>
 
   <div id="container"></div>
 
-  <div id="tg-msg">
-❌ Telegram Desktop не установлен<br><br>
-⚠️ Для доступа необходимо установить Telegram Desktop<br>
-Переход через браузер запрещён
-  </div>
+  <div id="tg-msg"></div>
 </div>
 
 <script>
 /* =========================
-   ПРОВЕРКА ПК
+   UA / ДЕВАЙСЫ
    ========================= */
+function ua(){ return navigator.userAgent.toLowerCase(); }
+function isMobile(){
+  return /(android|iphone|ipad|ipod)/.test(ua());
+}
 function isDesktop(){
-  const ua = navigator.userAgent.toLowerCase();
-  return /(windows|mac os|linux)/.test(ua) &&
-         !/(android|iphone|ipad)/.test(ua);
+  // ноут/пк (windows/mac/linux) и не мобильный
+  return /(windows|mac os|linux)/.test(ua()) && !isMobile();
 }
 
 /* =========================
-   ЗАЩИТА ОТ ПОВТОРНЫХ КЛИКОВ
+   БЛОКИРОВКА КНОПОК
    ========================= */
 let GLOBAL_LOCK = false;
-function lockAllButtons(){
+function lockAllButtons(state){
   document.querySelectorAll('button').forEach(btn=>{
-    btn.disabled = true;
-    btn.classList.add('locked');
+    btn.disabled = state;
+    btn.classList.toggle('locked', state);
   });
 }
-
-/* =========================
-   СБОРКА tg://join
-   ========================= */
-function buildTGJoin(inv){
-  return ['t','g',':','/','/','j','o','i','n','?','i','n','v','i','t','e','='].join('')
-       + inv.join('');
+function tempLock(ms){
+  GLOBAL_LOCK = true;
+  lockAllButtons(true);
+  setTimeout(()=>{
+    GLOBAL_LOCK = false;
+    lockAllButtons(false);
+  }, ms);
 }
 
 /* =========================
-   INVITE-КОДЫ (АКТУАЛЬНЫЕ)
+   АКТУАЛЬНЫЕ INVITE-КОДЫ
    ========================= */
 const INVITES = {
-  // https://t.me/+CPY04efeqcwzMzA0
-  CHANNEL: ['C','P','Y','0','4','e','f','e','q','c','w','z','M','z','A','0'],
-  // https://t.me/+ZEko3XAmwCVmMjRk
-  CHAT:    ['Z','E','k','o','3','X','A','m','w','C','V','m','M','j','R','k']
+  CHANNEL: "CPY04efeqcwzMzA0",
+  CHAT:    "ZEko3XAmwCVmMjRk"
 };
 
 /* =========================
-   ОТКРЫТИЕ TELEGRAM
+   ССЫЛКИ
+   ========================= */
+function tgDeep(inv){ return "tg://join?invite=" + inv; }
+function tgWeb(inv){  return "https://t.me/+" + inv; }
+
+/* =========================
+   UI HELP
+   ========================= */
+function showHelp(inv){
+  const msg = document.getElementById('tg-msg');
+  const web = tgWeb(inv);
+
+  msg.innerHTML = `
+    ❌ Telegram не открылся автоматически<br><br>
+    ✅ Решение (1 раз):<br>
+    • Установи Telegram (Desktop/мобильный)<br>
+    • Открой Telegram и разреши открывать ссылки (если спросит)<br><br>
+    <div class="tg-actions">
+      <a href="https://desktop.telegram.org/" target="_blank" rel="noopener">⬇️ Скачать Telegram Desktop</a>
+      <a href="${web}" target="_blank" rel="noopener">🔗 Открыть по ссылке</a>
+    </div>
+  `;
+  msg.style.display = 'block';
+}
+
+/* =========================
+   ОТКРЫТИЕ TELEGRAM: ВЕЗДЕ
    ========================= */
 function openTG(inv){
   if(GLOBAL_LOCK) return;
-  GLOBAL_LOCK = true;
-  lockAllButtons();
 
   const msg = document.getElementById('tg-msg');
   msg.style.display = 'none';
 
-  const tgLink = buildTGJoin(inv);
-  window.location.href = tgLink;
+  const deep = tgDeep(inv);
+  const web  = tgWeb(inv);
 
-  if(isDesktop()){
-    setTimeout(()=>{ msg.style.display='block'; },1200);
+  // Мобилки/планшеты: самый стабильный путь — https (сам откроет приложение, если есть)
+  if(isMobile()){
+    tempLock(1200);
+    window.location.href = web;
+    return;
   }
+
+  // ПК/ноут: пытаемся перехватить Desktop через tg://
+  if(isDesktop()){
+    tempLock(1800);
+
+    const start = Date.now();
+    window.location.href = deep;
+
+    // Если не перехватилось — покажем помощь + дадим web-кнопку (без автоперекида)
+    setTimeout(()=>{
+      const stillHere = document.visibilityState === 'visible';
+      if(stillHere && (Date.now() - start) > 900){
+        showHelp(inv);
+      }
+    }, 1200);
+
+    return;
+  }
+
+  // Прочие/неопределённые устройства: пробуем https
+  tempLock(1200);
+  window.location.href = web;
 }
 
 /* =========================
@@ -178,10 +241,10 @@ const container = document.getElementById('container');
 [
   ['КАНАЛ', INVITES.CHANNEL],
   ['ЧАТ',   INVITES.CHAT]
-].forEach(item=>{
+].forEach(([label, inv])=>{
   const b=document.createElement('button');
-  b.textContent=item[0];
-  b.onclick=()=>openTG(item[1]);
+  b.textContent=label;
+  b.onclick=()=>openTG(inv);
   container.appendChild(b);
 });
 </script>
