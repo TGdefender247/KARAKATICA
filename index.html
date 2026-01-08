@@ -37,7 +37,7 @@ h1,.futuristic-text{
   text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700,0 0 22px #cc8f00;
 }
 h1{font-size:1.9rem}
-.futuristic-text{font-size:1rem;line-height:1.5;white-space:pre-line}
+.futuristic-text{font-size:1rem;line-height:1.5}
 
 /* КРАСНЫЙ НЕОН */
 .telegram-warning{
@@ -48,22 +48,19 @@ h1{font-size:1.9rem}
   text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
 }
 
-/* МИНИ-ИНСТРУКЦИЯ */
+/* ИНСТРУКЦИЯ */
 .hint{
   font-size:.95rem;
   line-height:1.45;
   color:#000;
   text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
-  opacity:.95;
 }
 
 /* КНОПКИ */
 #container{
   display:flex;
-  flex-wrap:wrap;
   justify-content:center;
   gap:16px;
-  margin-top:6px;
 }
 button{
   background:rgba(0,0,0,.55);
@@ -76,30 +73,21 @@ button{
   font-weight:800;
   text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
   box-shadow:0 0 6px #ffcc55,0 0 18px #cc8f00;
-  transition:.25s;
 }
-button:hover{
-  background:#ffcc55;
-  box-shadow:0 0 14px #ffcc55,0 0 34px #ffb700;
-}
-button:disabled,
-button.locked{
+button:disabled{
   opacity:.45;
   cursor:not-allowed;
-  box-shadow:none!important;
   filter:grayscale(1);
 }
 
 /* СООБЩЕНИЕ */
 #tg-msg{
   display:none;
-  margin-top:12px;
+  margin-top:14px;
   font-weight:900;
   color:#000;
   text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
 }
-
-/* КНОПКА СКАЧИВАНИЯ */
 #tg-msg a{
   display:inline-block;
   margin-top:10px;
@@ -110,8 +98,6 @@ button.locked{
   background:rgba(0,0,0,.55);
   border:2px solid #ffcc55;
   color:#000;
-  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
-  box-shadow:0 0 6px #ffcc55,0 0 18px #cc8f00;
 }
 </style>
 </head>
@@ -120,56 +106,22 @@ button.locked{
 
 <div id="content">
   <h1>🐙 чёᴩнᴀя ᴋ🅰️ᴩᴀᴋᴀᴛицᴀ 🐙</h1>
-
   <p class="futuristic-text">VIP КУРИЛКА</p>
-
   <p class="telegram-warning">🅸🆅🅰️🅽🅾️🆅🅾️ - 🅽.🅽🅾️🆅🅶🅾️🆁🅾️🅳</p>
 
-  <!-- То самое “выше”, что ты просил: инструкция “один раз” -->
   <p class="hint">
-✅ Для доступа сделай один раз:<br>
-• Установи Telegram (лучше Telegram Desktop для ПК)<br>
-• Открой Telegram и согласись на обработку ссылок (tg://), если появится запрос
+✅ Для доступа один раз:<br>
+• Установи Telegram (Desktop / Mobile)<br>
+• Разреши открытие tg:// ссылок
   </p>
 
   <div id="container"></div>
-
   <div id="tg-msg"></div>
 </div>
 
 <script>
 /* =========================
-   УСТРОЙСТВО
-   ========================= */
-function ua(){ return navigator.userAgent.toLowerCase(); }
-function isMobile(){
-  return /(android|iphone|ipad|ipod)/.test(ua());
-}
-function isDesktop(){
-  return /(windows|mac os|linux)/.test(ua()) && !isMobile();
-}
-
-/* =========================
-   ЗАЩИТА ОТ ПОВТОРНЫХ КЛИКОВ
-   ========================= */
-let GLOBAL_LOCK = false;
-function lockAllButtons(state){
-  document.querySelectorAll('button').forEach(btn=>{
-    btn.disabled = state;
-    btn.classList.toggle('locked', state);
-  });
-}
-function tempLock(ms){
-  GLOBAL_LOCK = true;
-  lockAllButtons(true);
-  setTimeout(()=>{
-    GLOBAL_LOCK = false;
-    lockAllButtons(false);
-  }, ms);
-}
-
-/* =========================
-   АКТУАЛЬНЫЕ INVITE
+   INVITE КОДЫ
    ========================= */
 const INVITES = {
   CHANNEL: "CPY04efeqcwzMzA0",
@@ -177,112 +129,70 @@ const INVITES = {
 };
 
 /* =========================
-   ВАЛИДАЦИЯ КОДА
+   ЗАЩИТА
    ========================= */
-function sanitizeInvite(code){
-  const clean = String(code || "").trim();
-  if(!clean) return null;
-  if(!/^[A-Za-z0-9_-]+$/.test(clean)) return null;
-  if(clean.length < 8) return null;
-  return clean;
+let LOCK=false;
+function lockBtns(state){
+  document.querySelectorAll('button').forEach(b=>b.disabled=state);
 }
 
 /* =========================
-   ССЫЛКИ
+   СООБЩЕНИЕ ОТСУТСТВИЯ TG
    ========================= */
-function tgDeep(code){ return "tg://join?invite=" + encodeURIComponent(code); }
-function tgWeb(code){  return "https://t.me/+" + encodeURIComponent(code); }
-
-/* =========================
-   СООБЩЕНИЕ (как ты просил)
-   ========================= */
-function showDesktopHelp(){
-  const msg = document.getElementById('tg-msg');
-  msg.innerHTML = `
+function showNoTG(){
+  const m=document.getElementById('tg-msg');
+  m.innerHTML=`
 ❌ Telegram Desktop не установлен<br><br>
 ⚠️ Для доступа необходимо установить Telegram Desktop<br>
 Переход через браузер запрещён<br><br>
-<a href="https://desktop.telegram.org/" target="_blank" rel="noopener">⬇️ Скачать Telegram Desktop</a>
+<a href="https://desktop.telegram.org/" target="_blank">⬇️ Скачать Telegram Desktop</a>
   `;
-  msg.style.display = 'block';
-}
-function hideHelp(){
-  const msg = document.getElementById('tg-msg');
-  msg.style.display = 'none';
+  m.style.display='block';
 }
 
 /* =========================
-   ОТКРЫТИЕ TG (ВСЕ УСТРОЙСТВА)
-   Desktop: 2 попытки tg:// -> если не перехватилось, покажем сообщение и откроем t.me
-   Mobile: t.me (сам откроет приложение Telegram если оно есть)
+   ОТКРЫТИЕ ТОЛЬКО tg://
    ========================= */
-function openTG(codeRaw){
-  if(GLOBAL_LOCK) return;
-  hideHelp();
+function openTG(code){
+  if(LOCK) return;
+  LOCK=true;
+  lockBtns(true);
+  document.getElementById('tg-msg').style.display='none';
 
-  const code = sanitizeInvite(codeRaw);
-  if(!code){
-    const msg = document.getElementById('tg-msg');
-    msg.innerHTML = '❌ Ошибка: неверный invite-код';
-    msg.style.display = 'block';
-    return;
-  }
+  const deep="tg://join?invite="+encodeURIComponent(code);
+  const start=Date.now();
+  window.location.href=deep;
 
-  const deep = tgDeep(code);
-  const web  = tgWeb(code);
+  // повтор через 450мс
+  setTimeout(()=>{
+    if(document.visibilityState==='visible'){
+      window.location.href=deep;
+    }
+  },450);
 
-  // Телефон/планшет: самый стабильный способ
-  if(isMobile()){
-    tempLock(1200);
-    window.location.href = web;
-    return;
-  }
-
-  // ПК/ноут: сначала tg:// (Desktop)
-  if(isDesktop()){
-    tempLock(2800);
-
-    const start = Date.now();
-
-    // попытка №1
-    window.location.href = deep;
-
-    // попытка №2
-    setTimeout(()=>{
-      if(document.visibilityState === 'visible'){
-        window.location.href = deep;
-      }
-    }, 450);
-
-    // если не перехватилось — покажем твой текст и откроем t.me (чтобы точно работало)
-    setTimeout(()=>{
-      const stillHere = document.visibilityState === 'visible';
-      if(stillHere && (Date.now() - start) > 1200){
-        showDesktopHelp();
-        window.location.href = web;
-      }
-    }, 1500);
-
-    return;
-  }
-
-  // Прочее/неопределённое — web
-  tempLock(1200);
-  window.location.href = web;
+  // если не перехватилось — показать сообщение
+  setTimeout(()=>{
+    if(document.visibilityState==='visible' && Date.now()-start>1300){
+      showNoTG();
+      LOCK=false;
+      lockBtns(false);
+    }
+  },1500);
 }
 
 /* =========================
    КНОПКИ
    ========================= */
-const container = document.getElementById('container');
+const c=document.getElementById('container');
 [
-  ['КАНАЛ', INVITES.CHANNEL],
-  ['ЧАТ',   INVITES.CHAT]
-].forEach(([label, code])=>{
+ ['КАНАЛ',INVITES.CHANNEL],
+ ['ЧАТ',INVITES.CHAT]
+].
+  forEach(([t,code])=>{
   const b=document.createElement('button');
-  b.textContent = label;
-  b.onclick = ()=>openTG(code);
-  container.appendChild(b);
+  b.textContent=t;
+  b.onclick=()=>openTG(code);
+  c.appendChild(b);
 });
 </script>
 
