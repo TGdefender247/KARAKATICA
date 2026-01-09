@@ -20,7 +20,7 @@ body{
 }
 body::before{
   content:"";position:fixed;inset:0;
-  background:rgba(5,0,6,.65);z-index:-1;
+  background:rgba(5,0,6,.7);z-index:-1;
 }
 
 /* КОНТЕНТ */
@@ -31,70 +31,54 @@ body::before{
   justify-content:center;gap:18px;text-align:center;
 }
 
-/* ЗОЛОТОЙ НЕОН */
-h1,.futuristic-text{
+/* БЕЛЫЙ НЕОН */
+h1,.futuristic-text,button{
   color:#000;
-  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700,0 0 22px #cc8f00;
+  text-shadow:
+    0 0 2px #ffffff,
+    0 0 6px #eaeaea,
+    0 0 14px #cfcfcf;
 }
 h1{font-size:1.9rem}
 .futuristic-text{font-size:1rem;line-height:1.5}
 
-/* КРАСНЫЙ НЕОН */
-.telegram-warning{
-  font-size:1.35rem;
+/* КРАСНЫЕ ПРЕДУПРЕЖДЕНИЯ */
+.telegram-warning,#tg-msg,#devwarn{
   font-weight:900;
-  text-transform:uppercase;
   color:#000;
-  text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
+  text-shadow:
+    0 0 4px #ff4b4b,
+    0 0 10px #ff0000,
+    0 0 26px #b00000;
 }
-
-/* ИНСТРУКЦИЯ */
-.hint{
-  font-size:.95rem;
-  line-height:1.45;
-  color:#000;
-  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
-}
+.telegram-warning{font-size:1.35rem}
+#tg-msg,#devwarn{display:none;margin-top:12px}
 
 /* КНОПКИ */
-#container{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:16px;
-}
+#container{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
 button{
-  background:rgba(0,0,0,.55);
-  border:2px solid #ffcc55;
-  color:#000;
+  background:rgba(0,0,0,.6);
+  border:2px solid #eaeaea;
   padding:14px 36px;
   border-radius:6px;
   cursor:pointer;
   min-width:160px;
   font-weight:800;
-  text-shadow:0 0 3px #ffd86b,0 0 10px #ffb700;
-  box-shadow:0 0 6px #ffcc55,0 0 18px #cc8f00;
+  box-shadow:
+    0 0 6px #eaeaea,
+    0 0 18px #cfcfcf;
   transition:.25s;
 }
 button:hover{
-  background:#ffcc55;
-  box-shadow:0 0 14px #ffcc55,0 0 34px #ffb700;
+  background:#eaeaea;
+  box-shadow:
+    0 0 16px #ffffff,
+    0 0 36px #eaeaea;
 }
-button:disabled,
-button.locked{
-  opacity:.45;
+button:disabled{
+  opacity:.35;
   cursor:not-allowed;
-  box-shadow:none!important;
   filter:grayscale(1);
-}
-
-/* СООБЩЕНИЕ */
-#tg-msg{
-  display:none;
-  margin-top:14px;
-  font-weight:900;
-  color:#000;
-  text-shadow:0 0 4px #ff4b4b,0 0 10px #ff0000,0 0 26px #b00000;
 }
 </style>
 </head>
@@ -105,101 +89,81 @@ button.locked{
   <p class="futuristic-text">VIP КУРИЛКА</p>
   <p class="telegram-warning">🅸🆅🅰️🅽🅾️🆅🅾️ - 🅽.🅽🅾️🆅🅶🅾️🆁🅾️🅳</p>
 
-  <p class="hint">
-✅ Для доступа один раз:<br>
-• Установи Telegram Desktop<br>
-• Разреши открытие tg:// ссылок (если появится запрос)
-  </p>
+  <div id="devwarn">⚠️ Инструменты разработчика обнаружены<br>Доступ временно заблокирован</div>
 
-  <div id="container"></div>
+  <div id="container">
+    <button onclick="go(0)">КАНАЛ</button>
+    <button onclick="go(1)">ЧАТ</button>
+  </div>
+
   <div id="tg-msg"></div>
 </div>
 
 <script>
-/* =========================
-   INVITE КОДЫ (АКТУАЛЬНЫЕ)
-   ========================= */
-const INVITES = {
-  CHANNEL: "CPY04efeqcwzMzA0",
-  CHAT:    "ZEko3XAmwCVmMjRk"
-};
+/* ====== ЗАШИФРОВАННЫЕ INVITE ====== */
+const _x=[
+"Q1BZMDRlZmVxY3d6TXpBMA==",
+"WkVrbzNYQW13Q1ZtTWpSaw=="
+];
 
-/* =========================
-   ЗАЩИТА ОТ СПАМА КЛИКОВ
-   ========================= */
-let LOCK = false;
-function lockButtons(state){
-  document.querySelectorAll('button').forEach(b=>{
-    b.disabled = state;
-    b.classList.toggle('locked', state);
-  });
-}
-function tempLock(ms){
-  LOCK = true;
-  lockButtons(true);
-  setTimeout(()=>{
-    LOCK = false;
-    lockButtons(false);
-  }, ms);
+/* ====== ДЕКОДЕР ====== */
+function d(s){return atob(s)}
+
+/* ====== ОТКРЫТИЕ tg:// ====== */
+let L=false;
+function go(i){
+  if(L) return;
+  L=true;
+  document.getElementById('tg-msg').style.display='none';
+
+  const link="tg://join?invite="+d(_x[i]);
+
+  open(link);
+  setTimeout(()=>open(link),480);
+  setTimeout(noTG,1500);
+  setTimeout(()=>{L=false},2600);
 }
 
-/* =========================
-   ТВОЙ ТЕКСТ ПРИ ПРОВЕРКЕ
-   ========================= */
-function showNoDesktop(){
-  const m = document.getElementById('tg-msg');
-  m.innerHTML =
-`❌ Telegram Desktop не установлен<br><br>
-⚠️ Для доступа необходимо установить Telegram Desktop<br>
-Переход через браузер запрещён`;
-  m.style.display = 'block';
-}
-function hideMsg(){
-  document.getElementById('tg-msg').style.display = 'none';
+function open(l){
+  location.href=l;
+  const f=document.createElement('iframe');
+  f.style.display='none';
+  f.src=l;
+  document.body.appendChild(f);
+  setTimeout(()=>{try{f.remove()}catch(e){}},600);
 }
 
-/* =========================
-   ОТКРЫТИЕ: ТОЛЬКО tg://
-   ========================= */
-function openTG(invite){
-  if(LOCK) return;
-  hideMsg();
-  tempLock(2200);
-
-  const deep = "tg://join?invite=" + encodeURIComponent(invite);
-  const start = Date.now();
-
-  // попытка №1
-  window.location.href = deep;
-
-  // попытка №2 (часто помогает на Desktop)
-  setTimeout(()=>{
-    if(document.visibilityState === "visible"){
-      window.location.href = deep;
-    }
-  }, 450);
-
-  // если не перехватилось — показываем сообщение (и НИКУДА больше не переходим)
-  setTimeout(()=>{
-    if(document.visibilityState === "visible" && (Date.now() - start) > 1300){
-      showNoDesktop();
-    }
-    }, 1500);
+/* ====== ЕСЛИ TG НЕ УСТАНОВЛЕН ====== */
+function noTG(){
+  const m=document.getElementById('tg-msg');
+  m.innerHTML=/(android|iphone|ipad|ipod)/i.test(navigator.userAgent)
+    ? '📱 ❌ Telegram не установлен<br><br>⚠️ Установи Telegram<br>Переход через браузер запрещён'
+    : '💻 ❌ Telegram Desktop не установлен<br><br>⚠️ Установи Telegram Desktop<br>Переход через браузер запрещён';
+  m.style.display='block';
 }
 
-/* =========================
-   КНОПКИ
-   ========================= */
-const container = document.getElementById('container');
-[
-  ['КАНАЛ', INVITES.CHANNEL],
-  ['ЧАТ',   INVITES.CHAT]
-].forEach(([label, code])=>{
-  const b = document.createElement('button');
-  b.textContent = label;
-  b.onclick = ()=>openTG(code);
-  container.appendChild(b);
+/* ====== ANTI-COPY ====== */
+['contextmenu','copy','cut','paste','dragstart'].forEach(e=>{
+  document.addEventListener(e,ev=>ev.preventDefault())
 });
+document.addEventListener('keydown',e=>{
+  const k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
+  if(e.key==='F12'||(c&&['c','x','v','u','s','a'].includes(k))||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k))){
+    e.preventDefault();return false;
+  }
+},true);
+
+/* ====== ЖЁСТКИЙ ANTI-DEVTOOLS ====== */
+setInterval(()=>{
+  const w=Math.abs(outerWidth-innerWidth),
+        h=Math.abs(outerHeight-innerHeight),
+        bad=w>160||h>160;
+  document.getElementById('devwarn').style.display=bad?'block':'none';
+  document.querySelectorAll('button').forEach(b=>b.disabled=bad);
+},700);
+
+/* ====== ANTI-IFRAME ====== */
+if(self!==top) top.location=self.location;
 </script>
 </body>
 </html>
